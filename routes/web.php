@@ -328,7 +328,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::get('iyzipay', 'IyzipayController@iyzipay');
 
         // Make an iyzipay payment (redirect the user to iyzico payment gateway with the order details)
-        Route::get('iyzipay/pay', 'IyzipayController@pay'); 
+        Route::get('iyzipay/pay',  'PaypalController@success'); 
     });
 
 });

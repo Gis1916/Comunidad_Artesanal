@@ -176,11 +176,11 @@
                                             <label class="label-text" for="iyzipay">Tarjeta de Crédito o Débito</label>
                                         </div>
                                         <div class="u-s-m-b-13">
-    <input type="checkbox" class="check-box" id="accept" name="accept" value="Yes" title="Por favor, acepta los T&C">
-    <label class="label-text no-color" for="accept">He leído y acepto los
-        <a href="terms-and-conditions.html" class="u-c-brand">términos y condiciones</a>
-    </label>
-</div>
+                                    <input type="checkbox" class="check-box" id="accept" name="accept" value="Yes" title="Por favor, acepta los T&C">
+                                    <label class="label-text no-color" for="accept">He leído y acepto los
+                                        <a href="terms-and-conditions.html" class="u-c-brand">términos y condiciones</a>
+                                    </label>
+                                </div>
                                         <button type="submit" class="button">Realizar Pedido</button>
                                     </div>
                                 </form>
