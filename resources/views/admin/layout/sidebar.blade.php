@@ -53,7 +53,10 @@
                 </a>
                 <div class="collapse" id="ui-orders">
                     <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
-                        <li class="nav-item"> <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/orders') }}">Pedidos</a></li>
+                        <li class="nav-item"> <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/orders') }}">Pedidosss</a></li>
+                    </ul>
+                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
+                        <li class="nav-item"> <a @if (Session::get('page') == 'sales') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/sales') }}">Ventas</a></li>
                     </ul>
                 </div>
             </li>
@@ -118,6 +121,9 @@
                 <div class="collapse" id="ui-orders">
                     <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
                         <li class="nav-item"> <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/orders') }}">Pedidos</a></li>
+                    </ul>
+                      <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
+                        <li class="nav-item"> <a @if (Session::get('page') == 'sales') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/sales') }}">Ventas</a></li>
                     </ul>
                 </div>
             </li>

@@ -29,6 +29,195 @@ class AdminController extends Controller
 {
 
 
+/********************************* */
+
+
+
+/******************************** */
+public function viewVendorDetails($id, $slug = 'personal')
+{
+    $vendorDetails = Admin::with([
+        'vendorPersonal' => function ($query) {
+            $query->firstOrNew(); // Para obtener o inicializar
+        },
+        'vendorBusiness' => function ($query) {
+            $query->firstOrNew(); // Para obtener o inicializar
+        },
+        'vendorBank' => function ($query) {
+            $query->firstOrNew(); // Para obtener o inicializar
+        }
+    ])->find($id);
+
+    if (!$vendorDetails) {
+        return redirect()->route('admin.admins.vendor')->with('error', 'Vendedor no encontrado.');
+    }
+
+    return view('admin.admins.view_vendor_details', compact('vendorDetails', 'slug'));
+}
+public function viewVendorDetails3($id, $slug = 'personal')
+{
+    $vendorDetails = Admin::with('vendorPersonal', 'vendorBusiness', 'vendorBank')->find($id);
+
+    if (!$vendorDetails) {
+        return redirect()->route('admin.admins.vendor')->with('error', 'Vendedor no encontrado.');
+    }
+
+    return view('admin.admins.view_vendor_details', compact('vendorDetails', 'slug'));
+}
+public function updateVendorDetails(Request $request, $id, $slug)
+{
+    $data = $request->all();
+    $vendorDetails = Admin::find($id);
+
+    if (!$vendorDetails) {
+        return redirect()->route('admin.admins.vendor')->with('error', 'Vendedor no encontrado.');
+    }
+
+    // Validación y creación o actualización según el tipo de detalle
+    if ($slug === 'personal') {
+      //  dd('llego', $request, $id, $slug);
+        $request->validate([
+            'vendor_name' => 'required|string',
+            'vendor_city' => 'required|string',
+            'vendor_mobile' => 'required|numeric',
+            'vendor_email' => 'required|email',
+        ]);
+
+        // Actualizar o registrar detalles personales en `Admin`
+        $vendorDetails->update([
+            'name' => $data['vendor_name'],
+            'mobile' => $data['vendor_mobile'],
+            'email' => $data['vendor_email'],
+        ]);
+
+        // Subir imagen de perfil si está presente
+        if ($request->hasFile('vendor_image')) {
+            $image = $request->file('vendor_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('admin/images/photos'), $imageName);
+            $vendorDetails->update(['image' => $imageName]);
+        }
+
+    } elseif ($slug === 'business') {
+        $request->validate([
+            'shop_name' => 'required|string',
+            'shop_city' => 'required|string',
+            'shop_mobile' => 'required|numeric',
+            'shop_address' => 'required|string',
+        ]);
+        //dd('llego', $request, $id, $slug);
+        // Crear o actualizar los detalles del negocio en `VendorsBusinessDetail`
+        $businessDetail = VendorsBusinessDetail::updateOrCreate(
+            ['vendor_id' => $vendorDetails->id],
+            [
+                'shop_name' => $data['shop_name'],
+                'shop_mobile' => $data['shop_mobile'],
+                'shop_city' => $data['shop_city'],
+                'shop_state' => $data['shop_state'] ?? null,
+                'shop_address' => $data['shop_address'],
+            ]
+        );
+//dd('llego', $request, $id, $slug,$businessDetail );
+        // Subir imagen de prueba de dirección si está presente
+        if ($request->hasFile('address_proof_image')) {
+            $addressProofImage = $request->file('address_proof_image');
+            $proofImageName = time() . '.' . $addressProofImage->getClientOriginalExtension();
+            $addressProofImage->move(public_path('admin/images/proofs'), $proofImageName);
+            $businessDetail->update(['address_proof_image' => $proofImageName]);
+        }
+
+    } elseif ($slug === 'bank') {
+        $request->validate([
+            'account_holder_name' => 'required|string',
+            'bank_name' => 'required|string',
+            'account_number' => 'required|numeric',
+            'bank_ifsc_code' => 'required|string',
+        ]);
+
+        // Crear o actualizar los detalles bancarios en `VendorsBankDetail`
+        VendorsBankDetail::updateOrCreate(
+            ['vendor_id' => $vendorDetails->id],
+            [
+                'account_holder_name' => $data['account_holder_name'],
+                'bank_name' => $data['bank_name'],
+                'account_number' => $data['account_number'],
+                'bank_ifsc_code' => $data['bank_ifsc_code'],
+            ]
+        );
+    }
+
+    return redirect()->back()->with('success', 'Detalles del vendedor actualizados correctamente.');
+}
+
+public function updateVendorDetails3(Request $request, $id, $slug)
+{
+    $data = $request->all();
+    $vendorDetails = Admin::find($id);
+
+    if (!$vendorDetails) {
+        return redirect()->route('admin.admins.vendor')->with('error', 'Vendedor no encontrado.');
+    }
+
+    // Validación según el tipo de detalle
+    if ($slug === 'personal') {
+        $request->validate([
+            'name' => 'required|string',
+            'city' => 'required|string',
+            'mobile' => 'required|numeric',
+            'email' => 'required|email',
+        ]);
+
+        $vendorDetails->update([
+            'name' => $data['name'],
+            'mobile' => $data['mobile'],
+            'email' => $data['email'],
+        ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('admin/images/photos'), $imageName);
+            $vendorDetails->update(['image' => $imageName]);
+        }
+
+    } elseif ($slug === 'business') {
+        $request->validate([
+            'shop_name' => 'required|string',
+            'shop_city' => 'required|string',
+            'shop_mobile' => 'required|numeric',
+        ]);
+
+        VendorsBusinessDetail::updateOrCreate(
+            ['vendor_id' => $vendorDetails->vendor_id],
+            [
+                'shop_name' => $data['shop_name'],
+                'shop_mobile' => $data['shop_mobile'],
+                'shop_city' => $data['shop_city'],
+                'shop_state' => $data['shop_state'],
+            ]
+        );
+
+    } elseif ($slug === 'bank') {
+        $request->validate([
+            'account_holder_name' => 'required|string',
+            'bank_name' => 'required|string',
+            'account_number' => 'required|numeric',
+        ]);
+
+        VendorsBankDetail::updateOrCreate(
+            ['vendor_id' => $vendorDetails->vendor_id],
+            [
+                'account_holder_name' => $data['account_holder_name'],
+                'bank_name' => $data['bank_name'],
+                'account_number' => $data['account_number'],
+                'bank_ifsc_code' => $data['bank_ifsc_code'],
+            ]
+        );
+    }
+
+    return redirect()->back()->with('success', 'Detalles del vendedor actualizados correctamente.');
+}
+
     /************************** */
     public function create()
     {
@@ -37,8 +226,50 @@ class AdminController extends Controller
         
         return view('admin.admins.create', compact('roles'));
     }
-    
     public function store(Request $request)
+    {
+        // Validación de entrada
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:admins',
+            'mobile' => 'required',
+            'password' => 'required',
+            'roles' => 'required|array|min:1', // Asegurarse de que al menos un rol está seleccionado
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Validación de imagen
+        ]);
+    
+        // Determinar el tipo de usuario en función del rol seleccionado
+        $role = $request->roles[0];
+        $tipo = in_array($role, ['Vendedor', 'Delivery', 'Artesano']) ? $role : 'admin';
+    
+        // Procesamiento de la imagen si existe
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension(); // Crear nombre único
+            $image->move(public_path('admin/images/photos'), $imageName); // Guardar en la ruta especificada
+        }
+    
+        // Crear el nuevo administrador
+        $admin = Admin::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+            'password' => bcrypt($request->password),
+            'type' => $tipo,
+            'vendor_id' => $tipo === 'Artesano' ? 1 : 0,
+            'status' => 1,
+            'confirm' => 'Yes',
+            'image' => $imageName, // Guardar solo el nombre de la imagen en la base de datos
+        ]);
+    
+        // Asignar el rol al usuario
+        $admin->syncRoles($request->roles);
+    
+        return redirect()->route('admins.full')->with('success', 'Administrador creado con éxito.');
+    }
+
+    public function store2(Request $request)
     {
         
         $tipo='Admin';
@@ -256,7 +487,7 @@ class AdminController extends Controller
         return view('admin/settings/update_admin_details');
     }
 
-    public function updateVendorDetails($slug, Request $request) { // $slug can only be: 'personal', 'business' or 'bank'
+    public function updateVendorDetails2($slug, Request $request) { // $slug can only be: 'personal', 'business' or 'bank'
         if ($slug == 'personal') {
             // Correcting issues in the Skydash Admin Panel Sidebar using Session
             Session::put('page', 'update_personal_details');
@@ -558,10 +789,10 @@ class AdminController extends Controller
         return view('admin/admins/admins')->with(compact('admins', 'title'));
     }
 
-    public function viewVendorDetails($id) { // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
+    public function viewVendorDetails2($id) { // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
         $vendorDetails = Admin::with('vendorPersonal', 'vendorBusiness','vendorBank')->where('id', $id)->first(); // Using the relationship defined in the Admin.php model to be able to get data from `vendors`, `vendors_business_details` and `vendors_bank_details` tables
         $vendorDetails = json_decode(json_encode($vendorDetails), true); // We used json_decode(json_encode($variable), true) to convert $vendorDetails to an array instead of Laravel's toArray() method
-        // dd($vendorDetails);
+         //dd($vendorDetails,$id);
 
         return view('admin/admins/view_vendor_details')->with(compact('vendorDetails'));
     }

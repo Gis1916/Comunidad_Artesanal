@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\SalesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,6 +32,15 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
 
         
 
+       // Route::get('daily', [SalesController::class, 'dailySales'])->name('sales.daily');
+       /// Route::get('weekly', [SalesController::class, 'weeklySales'])->name('sales.weekly');
+       // Route::get('monthly', [SalesController::class, 'monthlySales'])->name('sales.monthly');
+        
+        Route::get('sales', [SalesController::class, 'index'])->name('sales.filter');
+        Route::get('sales/top-selling', [SalesController::class, 'topSellingProducts'])->name('sales.topSelling');
+        Route::get('sales/export-pdf', [SalesController::class, 'exportPDF'])->name('sales.export_pdf');
+
+
         Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create');
         Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store');
 
@@ -42,13 +52,31 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::match(['get', 'post'], 'update-admin-password', 'AdminController@updateAdminPassword'); // GET request to view the update password <form>, and a POST request to submit the update password <form>
         Route::post('check-admin-password', 'AdminController@checkAdminPassword'); // Check Admin Password // This route is called from the AJAX call in admin/js/custom.js page
         Route::match(['get', 'post'], 'update-admin-details', 'AdminController@updateAdminDetails'); // Update Admin Details in update_admin_details.blade.php page    // 'GET' method to show the update_admin_details.blade.php page, and 'POST' method for the <form> submission in the same page
-        Route::match(['get', 'post'], 'update-vendor-details/{slug}', 'AdminController@updateVendorDetails'); // Update Vendor Details    // In the slug we can pass: 'personal' which means update vendor personal details, or 'business' which means update vendor business details, or 'bank' which means update vendor bank details    // We'll create one view (not 3) for the 3 pages, but parts inside it will change depending on the $slug value    // GET method to show the update admin details page, POST method for <form> submission
-
+        //Route::match(['get', 'post'], 'update-vendor-details/{slug}', 'AdminController@updateVendorDetails'); // Update Vendor Details    // In the slug we can pass: 'personal' which means update vendor personal details, or 'business' which means update vendor business details, or 'bank' which means update vendor bank details    // We'll create one view (not 3) for the 3 pages, but parts inside it will change depending on the $slug value    // GET method to show the update admin details page, POST method for <form> submission
+        Route::get('update-vendor-details/{slug}', 'AdminController@updateVendorDetails')->name('admin.updateVendorDetails');
+        //Route::post('admin/update-vendor-details/{slug}', 'AdminController@updateVendorDetails');
+        
         // Update the vendor's commission percentage (by the Admin) in `vendors` table (for every vendor on their own) in the Admin Panel in admin/admins/view_vendor_details.blade.php (Commissions module: Every vendor must pay a certain commission (that may vary from a vendor to another) for the website owner (admin) on every item sold, and it's defined by the website owner (admin))
         Route::post('update-vendor-commission', 'AdminController@updateVendorCommission');
 
         Route::get('admins/{type?}', 'AdminController@admins')->name('admins.full'); // In case the authenticated user (logged-in user) is superadmin, admin, subadmin, vendor these are the three Admin Management URLs depending on the slug. The slug is the `type` column in `admins` table which can only be: superadmin, admin, subadmin, or vendor    // Used an Optional Route Parameters (or Optional Route Parameters) using a '?' question mark sign, for in case that there's no any {type} passed, the page will show ALL superadmins, admins, subadmins and vendors at the same page
         Route::get('view-vendor-details/{id}', 'AdminController@viewVendorDetails'); // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
+       
+        Route::get('view-vendor-details/{id}/{slug?}', [AdminController::class, 'viewVendorDetails'])->name('admin.viewVendorDetails');
+      //  Route::post('/admin/update-vendor-details/{id}/{slug}', [AdminController::class, 'updateVendorDetails'])->name('admin.updateVendorDetails');
+       Route::get('admin/view-vendor-details/{id}/{slug}', [AdminController::class, 'viewVendorDetails'])->name('admin.viewVendorDetails');
+        Route::post('admin/update-vendor-details/{id}/{slug}', [AdminController::class, 'updateVendorDetails'])->name('admin.updateVendorDetails');
+        
+        /******************************* */
+// Ruta para ver detalles del vendedor
+//Route::get('admin/view-vendor-details/{id}', 'AdminController@viewVendorDetails')->name('admin.viewVendorDetails');
+
+// Ruta para actualizar detalles del vendedor
+//Route::put('admin/update-vendor-details/{id}', 'AdminController@updateVendorDetails')->name('admin.updateVendorDetails');
+
+
+        /******************************* */
+        
         Route::post('update-admin-status', 'AdminController@updateAdminStatus'); // Update Admin Status using AJAX in admins.blade.php
     
 
@@ -118,7 +146,11 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::get('users', 'UserController@users'); // Render admin/users/users.blade.php page in the Admin Panel
         Route::post('update-user-status', 'UserController@updateUserStatus'); // Update User Status (active/inactive) via AJAX in admin/users/users.blade.php, check admin/js/custom.js
 
+
+
+
         // Orders
+
         // Render admin/orders/orders.blade.php page (Orders Management section) in the Admin Panel
         Route::get('orders', 'OrderController@orders');
         // Nueva ruta para rastrear pedido

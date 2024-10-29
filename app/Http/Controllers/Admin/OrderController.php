@@ -57,7 +57,7 @@ class OrderController extends Controller
 
         return view('admin.orders.orders')->with(compact('orders'));
     }
-
+  
     // Render admin/orders/order_details.blade.php (View Order Details page) when clicking on the View Order Details icon in admin/orders/orders.blade.php (Orders tab under Orders Management section in Admin Panel)    
     public function orderDetails($id) {
         // Correcting issues in the Skydash Admin Panel Sidebar using Session
@@ -75,7 +75,6 @@ class OrderController extends Controller
                 return redirect('admin/update-vendor-details/personal')->with('error_message', 'Your Vendor Account is not approved yet. Please make sure to fill your valid personal, business and bank details.'); // the error_message will appear to the vendor in the route: 'admin/update-vendor-details/personal' which is the update_vendor_details.blade.php page
             }
         }
-
 
         
         if ($adminType == 'vendor') { // If the authenticated/logged-in user is 'vendor', we show ONLY the details of the orders of the products added by that specific 'vendor' ONLY (from `orders_products` table) in admin/orders/order_details.blade.php page
