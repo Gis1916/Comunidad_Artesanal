@@ -10,7 +10,7 @@
                             <h4 class="card-title">{{ $title }}</h4>
 
                             <!-- Botón para abrir el formulario de crear administrador -->
-                            <a href="{{ route('admins.create') }}" class="btn btn-primary mb-3">Crear Administrador</a>
+                            <a href="{{ route('admins.create') }}" class="btn btn-primary mb-3">Crear Usuario</a>
 
                             <div class="table-responsive pt-3">
                                 <table class="table table-bordered">
@@ -53,11 +53,11 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($admin['type'] == 'vendor')
+                                                   
                                                         <a href="{{ url('admin/view-vendor-details/' . $admin['id']) }}">
                                                             <i style="font-size: 25px" class="mdi mdi-file-document"></i>
                                                         </a>
-                                                    @endif
+                                                
                                                 </td>
                                             </tr>
                                         @endforeach

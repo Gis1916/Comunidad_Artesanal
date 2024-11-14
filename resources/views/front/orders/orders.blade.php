@@ -69,6 +69,7 @@
                                     <a href="{{ url('user/orders/' . $order['id']) }}" class="btn {{ $buttonClass }} btn-sm">
                                         ¿Por dónde está mi pedido?
                                     </a>
+								
                                 </td>
                             </tr>
                         @endforeach
