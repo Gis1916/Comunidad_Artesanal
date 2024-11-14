@@ -1,6 +1,5 @@
-{{-- Esta vista es renderizada por el método ratings() en Admin/RatingController.php --}}
 @extends('admin.layout.layout')
-
+ <!-- Comunidad_Artesanal\resources\views\admin\ratings\ratings.blade.php-->
 @section('content')
     <div class="main-panel">
         <div class="content-wrapper">
@@ -15,7 +14,7 @@
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>Éxito:</strong> {{ Session::get('success_message') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                                    <span aria-hidden="true">&times;</span>
+                                        <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                             @endif
@@ -31,6 +30,7 @@
                                             <th>Reseña</th>
                                             <th>Calificación</th>
                                             <th>Estado</th>
+                                            <th>Respuesta</th> <!-- Nueva columna -->
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -55,6 +55,17 @@
                                                         <a class="updateRatingStatus" id="rating-{{ $rating['id'] }}" rating_id="{{ $rating['id'] }}" href="javascript:void(0)">
                                                             <i style="font-size: 25px" class="mdi mdi-bookmark-outline" status="Inactivo"></i>
                                                         </a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($rating['response'])
+                                                        {{ $rating['response'] }}
+                                                    @else
+                                                        <form action="{{ route('ratings.respond', $rating['id']) }}" method="POST">
+                                                            @csrf
+                                                            <textarea name="response" required placeholder="Escribe tu respuesta aquí..."></textarea>
+                                                            <button type="submit">Responder</button>
+                                                        </form>
                                                     @endif
                                                 </td>
                                                 <td>

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 use Symfony\Component\VarDumper\VarDumper;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Admin;
 use App\Models\Section;
@@ -80,7 +82,6 @@ class AdminController extends Controller
     public function dashboard() {
         // Correcting issues in the Skydash Admin Panel Sidebar using Session:
         Session::put('page', 'dashboard');
-
 
         $sectionsCount   = Section::count();
         $categoriesCount = Category::count();
@@ -619,5 +620,4 @@ class AdminController extends Controller
             ]);
         }
     }
-
 }

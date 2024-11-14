@@ -51,7 +51,22 @@
                                 <td>{{ $order['grand_total'] }}</td>
                                 <td>{{ date('Y-m-d h:i:s', strtotime($order['created_at'])) }}</td>
                                 <td>
-                                    <a href="{{ url('user/orders/' . $order['id']) }}" class="btn btn-primary btn-sm">
+                                    @php
+                                        // Determinar el color del botón según el estado del pedido
+                                        $buttonClass = 'btn-primary'; // Color por defecto
+                                        if (isset($order['order_status'])) {
+                                            switch ($order['order_status']) {
+                                                case 'Entregado': 
+                                                    $buttonClass = 'btn-success'; // Verde para entregado
+                                                    break;
+                                                case 'Cancelado': 
+                                                    $buttonClass = 'btn-danger'; // Rojo para cancelado
+                                                    break;
+                                                // Puedes agregar más casos si es necesario
+                                            }
+                                        }
+                                    @endphp
+                                    <a href="{{ url('user/orders/' . $order['id']) }}" class="btn {{ $buttonClass }} btn-sm">
                                         ¿Por dónde está mi pedido?
                                     </a>
                                 </td>

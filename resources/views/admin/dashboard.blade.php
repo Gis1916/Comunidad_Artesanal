@@ -7,17 +7,15 @@
                 <div class="col-md-12 grid-margin">
                     <div class="row">
                         <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                            <h3 class="font-weight-bold">Bienvenido a la  Comunidad Artesanal</h3> {{-- {{ Auth::guard('admin')->user()->name }} Acceder a instancias específicas del guard: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances --}} <!-- Recuperar el usuario autenticado: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user --> <!-- Acceder a instancias específicas del guard: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances --> <!-- Recuperar modelos: https://laravel.com/docs/9.x/eloquent#retrieving-models -->
+                            <h3 class="font-weight-bold">Bienvenido a la Comunidad Artesanal</h3>
                             <h6 class="font-weight-normal mb-0">¡Todos los sistemas están funcionando correctamente!</h6>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="row">
-
-                
                 <div class="col-md-6 grid-margin transparent">
-
                     <div class="row">
                         <div class="col-md-6 mb-4 stretch-card transparent">
                             <div class="card card-tale">
@@ -54,7 +52,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="col-md-6 grid-margin transparent">
                     <div class="row">
@@ -86,18 +83,12 @@
                         </div>
                         <div class="col-md-6 stretch-card transparent">
                             <div class="card card-light-danger">
-                                <div class="card-body">
-                                    <p class="mb-4">Total Suscriptores</p>
-                                    <p class="fs-30 mb-2">0</p>
-                                </div>
+                                <!-- Aquí puedes continuar con más contenido -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- content-wrapper termina -->
-        @include('admin.layout.footer')
-        <!-- parcial -->
     </div>
 @endsection

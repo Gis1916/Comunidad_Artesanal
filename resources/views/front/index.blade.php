@@ -1,7 +1,7 @@
 {{-- This page is rendered by index() method in Front/IndexController.php --}}
 @extends('front.layout.layout')
 
-
+<!-- C:\xampp\htdocs\Comunidad_Artesanal\resources\views\front\INDEX.BLADE.PHP -->
 @section('content')
             <!-- Main-Slider -->
             <!-- Carrusel Principal -->
@@ -110,15 +110,28 @@
                                                     </ul>
                                                     <h6 class="item-title">
                                                         <a href="{{ url('product/' . $product['id']) }}">{{ $product['product_name'] }}</a>
-                                                    </h6>
-                                                    <div class="item-stars">
-                                                        <div class='star' title="0 de 5 - basado en 0 Reseñas">
-                                                            <span style='width:0'></span>
-                                                        </div>
-                                                        <span>(0)</span>
-                                                    </div>
-                                                </div>
+                                                    </h6>   
+<!--SE CAMBIO----------------------------------------------------- /- -->                 
+                                                    <div title="{{ $product->avgRating ?? 0 }} de 5 - basado en {{ $product->ratings_count ?? 0 }} reseñas">   
+                                                    {{-- Mostrar las estrellas de calificación si el producto tiene reseñas --}}
+                                                        @if ($product->avgRating > 0)
+                                                            @for ($star = 1; $star <= floor($product->avgRating); $star++)
+                                                                <span style="color: gold; font-size: 17px">&#9733;</span> <!-- Mostrar estrellas completas -->
+                                                            @endfor
 
+                                                            @if ($product->avgRating - floor($product->avgRating) >= 0.5)
+                                                                <span style="color: gold; font-size: 17px">&#9734;</span> <!-- Mostrar media estrella -->
+                                                            @endif
+
+                                                            ({{ number_format($product->avgRating, 1) }}) <!-- Mostrar la calificación promedio con un decimal -->
+                                                        @else
+                                                            (0.0) <!-- Si no hay calificaciones, mostrar 0.0 -->
+                                                        @endif
+                                                        
+                                                        <span> - {{ $product->ratings_count ?? 0 }} reseña{{ ($product->ratings_count ?? 0) !== 1 ? 's' : '' }}</span> <!-- Mostrar la cantidad de reseñas -->
+                                                    </div>
+ <!--SE CAMBIO----------------------------------------------------- /- -->
+                                                </div>
                                                 {{-- Llamar al método estático getDiscountPrice() en el modelo Product.php para determinar el precio final de un producto, ya que un producto puede tener un descuento de DOS cosas: ya sea un descuento de `CATEGORÍA` o un descuento de `PRODUCTO` --}}
                                                 @php
                                                     $getDiscountPrice = \App\Models\Product::getDiscountPrice($product['id']);

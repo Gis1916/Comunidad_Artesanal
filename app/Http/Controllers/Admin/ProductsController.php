@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Product;
 use App\Models\ProductsImage;
 use App\Models\ProductsFilter;
 use App\Models\ProductsAttribute;
+use App\Mail\LowStockAlert;
 
 
 class ProductsController extends Controller
@@ -52,7 +56,43 @@ class ProductsController extends Controller
 
         return view('admin.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view
     }
+// se cambio---------------------------------------------------------------
+    public function sendLowStockAlerts()
+    {
+        // Obtener productos con stock bajo
+        $lowStockProducts = Product::where('stock', '<', 5)->get(); 
+        $vendedoresEmails = [];
     
+        foreach ($lowStockProducts as $product) {
+            $vendedor = $product->vendor; // Obtener el vendedor asociado
+    
+            if ($vendedor) {
+                // Agrupar productos por vendedor
+                $vendedoresEmails[$vendedor->email][] = $product; 
+            } else {
+                // Enviar correo al administrador si no hay vendedor
+                $adminEmail = 'admin@admin.com'; 
+                $vendedoresEmails[$adminEmail][] = $product;
+            }
+        }
+    
+        // Enviar correos a cada vendedor o al administrador
+        foreach ($vendedoresEmails as $email => $products) {
+            try {
+                // Enviar correo utilizando la clase de alerta de bajo stock
+                Mail::to($email)->send(new LowStockAlert($products));
+            } catch (\Exception $e) {
+                // Manejo de errores: registrar el error
+                Log::error("Error al enviar alerta de bajo stock a {$email}: {$e->getMessage()}");
+                // Opcional: enviar notificación al administrador
+                // Mail::to($adminEmail)->send(new ErrorNotification($e->getMessage()));
+            }
+        }
+    
+        return redirect()->back()->with('success_message', 'Alertas de bajo stock enviadas correctamente.');
+    }
+// se cambio---------------------------------------------------------------    
+
     public function updateProductStatus(Request $request) { // Update Product Status using AJAX in products.blade.php
         if ($request->ajax()) { // if the request is coming via an AJAX call
             $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
@@ -393,7 +433,7 @@ class ProductsController extends Controller
                     $attribute->save();
                 }
             }
-            return redirect()->back()->with('success_message', 'Product Attributes have been addded successfully!');
+            return redirect()->back()->with('success_message', '¡Los atributos del producto se han agregado con exito!');
         }
 
 
@@ -420,28 +460,43 @@ class ProductsController extends Controller
             ]);
         }
     }
-
-    public function editAttributes(Request $request) {
-        Session::put('page', 'products');
-
-        if ($request->isMethod('post')) { // if the <form> is submitted
-            $data = $request->all();
-            // dd($data);
-
-            foreach ($data['attributeId'] as $key => $attribute) {
-                if (!empty($attribute)) {
-                    ProductsAttribute::where([
-                        'id' => $data['attributeId'][$key]
-                    ])->update([
-                        'price' => $data['price'][$key],
-                        'stock' => $data['stock'][$key]
-                    ]);
+// se cambio---------------------------------------------------------------
+    public function editAttributes(Request $request, $id) {
+        // Validación de entrada
+        $request->validate([
+            'attributeId' => 'required|array',
+            'price.*' => 'required|numeric|min:0',
+            'stock.*' => 'required|integer|min:0',
+        ]);
+    
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $data = $request->all();
+                $totalStock = 0; // Variable para acumular el stock total
+    
+                foreach ($data['attributeId'] as $key => $attribute) {
+                    if (!empty($attribute)) {
+                        // Actualiza el atributo
+                        ProductsAttribute::where('id', $data['attributeId'][$key])->update([
+                            'price' => $data['price'][$key],
+                            'stock' => $data['stock'][$key]
+                        ]);
+    
+                        // Acumula el stock
+                        $totalStock += $data['stock'][$key];
+                    }
                 }
-            }
-
-            return redirect()->back()->with('success_message', 'Product Attributes have been updated successfully!');
+    
+                // Actualiza el stock en la tabla de productos
+                Product::where('id', $id)->update(['stock' => $totalStock]);
+            });
+    
+            return redirect()->back()->with('success_message', 'Los atributos del producto se han actualizado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_message', 'Error al actualizar los atributos: ' . $e->getMessage());
         }
-    }
+    }    
+ // se cambio---------------------------------------------------------------      
 
     public function addImages(Request $request, $id) { // $id is the URL Paramter (slug) passed from the URL
         Session::put('page', 'products');
@@ -556,5 +611,4 @@ class ProductsController extends Controller
 
         return redirect()->back()->with('success_message', $message);
     }
-
 }

@@ -1,6 +1,6 @@
 {{-- Correcting issues in the Skydash Admin Panel Sidebar using Session --}}
 
-
+<!-- Comunidad_Artesanal\resources\views\admin\layout\sidebar.blade.php-->
 <!-- partial:partials/_sidebar.html -->
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
@@ -29,11 +29,11 @@
                     </ul>
                 </div>
             </li>
-
+            {{-- se cambio-----------------------------------------------------------------}}
             <li class="nav-item">
                 <a @if (Session::get('page') == 'sections' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'brands' || Session::get('page') == 'filters' || Session::get('page') == 'coupons') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" data-toggle="collapse" href="#ui-catalogue" aria-expanded="false" aria-controls="ui-catalogue">
                     <i class="icon-layout menu-icon"></i>
-                    <span class="menu-title">Gestión del Catálogo</span>
+                    <span class="menu-title">Gestión de Catálogo</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="ui-catalogue">
@@ -43,7 +43,7 @@
                     </ul>
                 </div>
             </li>
-
+            {{-- se cambio-----------------------------------------------------------------}}
             {{-- Si el usuario autenticado/iniciado sesión es 'vendedor', muestra SOLO los pedidos de los productos añadidos por ese 'vendedor' específico (En contraste con el caso en que el usuario autenticado/iniciado sesión es 'administrador', mostramos TODOS los pedidos) --}}
             <li class="nav-item">
                 <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" data-toggle="collapse" href="#ui-orders" aria-expanded="false" aria-controls="ui-orders">
@@ -54,6 +54,21 @@
                 <div class="collapse" id="ui-orders">
                     <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
                         <li class="nav-item"> <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/orders') }}">Pedidos</a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a @if (Session::get('page') == 'ratings') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" data-toggle="collapse" href="#ui-ratings" aria-expanded="false" aria-controls="ui-ratings">
+                    <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">Gestión de Calificaciones</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-ratings">
+                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
+                        <li class="nav-item"> 
+                            <a @if (Session::get('page') == 'ratings') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/ratings') }}">Calificaciones y Reseñas de Productos</a>
+                        </li>
                     </ul>
                 </div>
             </li>

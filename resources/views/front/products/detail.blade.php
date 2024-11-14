@@ -1,54 +1,207 @@
 {{-- Note: front/products/detail.blade.php is the page that opens when you click on a product in the FRONT home page --}} {{-- $productDetails, categoryDetails and $totalStock are passed in from detail() method in Front/ProductsController.php --}}
 @extends('front.layout.layout')
 
-
+<!-- Comunidad_Artesanal\resources\views\front\products\detail.blade.php /- -->
+ <!--SE CAMBIO----------------------------------------------------- /- -->
 @section('content')
-    {{-- Star Rating (of a Product) (in the "Reviews" tab) --}}
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        .rate {
-            float: left;
-            height: 46px;
-            padding: 0 10px;
-        }
-        .rate:not(:checked) > input {
-            /* position:absolute; */
-            position:inherit;
-            top:-9999px;
-        }
-        .rate:not(:checked) > label {
-            float:right;
-            width:1em;
-            overflow:hidden;
-            white-space:nowrap;
-            cursor:pointer;
-            font-size:30px;
-            color:#ccc;
-        }
-        .rate:not(:checked) > label:before {
-            content: '★ ';
-        }
-        .rate > input:checked ~ label {
-            color: #ffc700;    
-        }
-        .rate:not(:checked) > label:hover,
-        .rate:not(:checked) > label:hover ~ label {
-            color: #deb217;  
-        }
-        .rate > input:checked + label:hover,
-        .rate > input:checked + label:hover ~ label,
-        .rate > input:checked ~ label:hover,
-        .rate > input:checked ~ label:hover ~ label,
-        .rate > label:hover ~ input:checked ~ label {
-            color: #c59b08;
-        }
-    </style>
+{{-- Star Rating (of a Product) (in the "Reviews" tab) --}}
+<style>
+    /* Reset de márgenes y rellenos */
+    * {
+        margin: 0;
+        padding: 0;
+    }
 
+    /* Estilos de calificación */
+    .rate {
+        float: left;
+        height: 46px;
+        padding: 0 10px;
+        direction: rtl; /* Cambia la dirección para que las estrellas se coloreen de derecha a izquierda */
+    }
 
-    
+    .rate input {
+        display: none; /* Oculta los radios */
+    }
+
+    .rate:not(:checked) > label {
+        float: right;
+        width: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        font-size: 30px;
+        color: #ccc;
+    }
+
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+
+    .rate > input:checked ~ label {
+        color: gold;
+    }
+
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;
+    }
+
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+
+    /* Estilos del contenedor de reseñas */
+    .review-whole-container {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .total-score-wrapper {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Estilos del círculo de puntuación */
+    .circle-wrapper {
+        display: inline-block;
+        border: 5px solid #007bff;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        font-size: 2em;
+        color: #007bff;
+    }
+
+    /* Estilos de texto de reseñas */
+    .review-h6 {
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .total-star-meter {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .star-wrapper {
+        text-align: center;
+    }
+
+    .star-wrapper span {
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    /* Estilos del contenedor de calificación */
+    .your-rating-wrapper {
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos del área de texto */
+    .text-area {
+        width: 100%;
+        height: 100px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+        resize: none;
+    }
+
+    /* Estilos del botón */
+    .button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilos para reseñas */
+    .get-reviews {
+        margin-top: 20px;
+    }
+
+    .review-options {
+        margin-bottom: 16px;
+    }
+
+    .review-option-heading {
+        margin-bottom: 10px;
+    }
+
+    .reviewers {
+        margin-top: 20px;
+    }
+
+    .review-data {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .reviewer-name-and-date {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .reviewer-name {
+        font-weight: bold;
+    }
+
+    .reviewer-date {
+        color: #888;
+    }
+
+    .review-text {
+        margin-bottom: 10px;
+    }
+
+    .review-stars span {
+        font-size: 1.5em;
+    }
+
+    .vendor-response {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+    }
+
+    .response-text {
+        margin: 0;
+    }
+
+    .no-reviews {
+        text-align: center;
+        font-style: italic;
+        color: #888;
+    }
+</style>
+ <!--SE CAMBIO----------------------------------------------------- /- -->
     <!-- Encabezado de la Página -->
     <div class="page-style-a">
         <div class="container">
@@ -159,19 +312,20 @@
 
                             <div class="product-rating">
                                 <div title="{{ $avgRating }} de 5 - basado en {{ count($ratings) }} reseñas">
-                                    {{-- Mostrar las estrellas de calificación si el producto tiene reseñas --}}
-                                    @if ($avgStarRating > 0) 
-                                        @php
-                                            $star = 1;
-                                            while ($star < $avgStarRating):
-                                        @endphp
-                                            <span style="color: gold; font-size: 17px">&#9733;</span> <!-- Mostrar estrellas -->
-                                        @php
-                                            $star++;
-                                            endwhile;
-                                        @endphp
-                                        ({{ $avgRating }}) <!-- Mostrar la calificación promedio -->
+ <!--SE CAMBIO----------------------------------------------------- /- -->
+                                {{-- Mostrar las estrellas de calificación si el producto tiene reseñas --}}
+                                @if ($avgStarRating > 0)
+                                    @for ($star = 1; $star <= floor($avgStarRating); $star++)
+                                        <span style="color: gold; font-size: 17px">&#9733;</span> <!-- Mostrar estrellas completas -->
+                                    @endfor
+
+                                    @if ($avgStarRating - floor($avgStarRating) >= 0.5)
+                                        <span style="color: gold; font-size: 17px">&#9734;</span> <!-- Mostrar media estrella -->
                                     @endif
+
+                                    ({{ number_format($avgRating, 1) }}) <!-- Mostrar la calificación promedio con un decimal -->
+                                @endif
+ <!--SE CAMBIO----------------------------------------------------- /- -->
                                 </div>
                             </div>
                         </div>
@@ -231,12 +385,10 @@
                         </div>
 
                         {{-- Mostrar nombre de la tienda del vendedor si el producto es vendido por un proveedor --}}
-                        @if(isset($productDetails['vendor']))
-                            <div>
-                                Vendido por: <a href="/products/{{ $productDetails['vendor']['id'] }}">
-                                    {{ $productDetails['vendor']['vendorbusinessdetails']['shop_name'] }} <!-- Nombre de la tienda del vendedor -->
-                                </a>
-                            </div>
+                        @if(isset($productDetails['vendor']) && isset($productDetails['vendor']['vendorbusinessdetails']))
+                            Vendido por la comunidad de: <span class="community">{{ $vendorDetails['state'] ?? '¿?' }}</span>
+                        @else
+                            Vendido por la comunidad de: <span class="community">{{ $vendorDetails['state'] ?? '¿?' }}</span>
                         @endif
 
                         {{-- Formulario para añadir el producto al carrito --}}
@@ -358,6 +510,7 @@
                                     </div>
                                 </div>
                             </div>
+ <!--SE CAMBIO----------------------------------------------------- /- -->
                             <!-- Pestaña de Especificaciones /- -->
                             <!-- Pestaña de Reseñas -->
                             <div class="tab-pane fade" id="review">
@@ -367,136 +520,100 @@
                                             <div class="total-score-wrapper">
                                                 <h6 class="review-h6">Calificación Promedio</h6>
                                                 <div class="circle-wrapper">
-                                                    <h1>{{ $avgRating }}</h1>
+                                                    <h1>{{ number_format($avgRating, 1) }}</h1>
                                                 </div>
                                                 <h6 class="review-h6">Basado en {{ count($ratings) }} Reseñas</h6>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6">
-                                            <div class="total-star-meter">
-                                                <div class="star-wrapper">
-                                                    <span>5 Estrellas</span>
-                                                    <div class="star">
-                                                        <span style='width:0'></span>
+                                            <div class="total-star-meter" style="display: flex; flex-wrap: wrap;">
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <div class="star-wrapper" style="display: flex; align-items: center; margin-right: 15px; margin-bottom: 10px;">
+                                                        <span>{{ $i }} Estrella{{ $i > 1 ? 's' : '' }}</span>
+                                                        <span style="margin-left: 10px;">({{ $starCounts[$i] }})</span>
+                                                        <span style="margin-left: 10px;">
+                                                            @for ($j = 1; $j <= 5; $j++)
+                                                                <span style="color: {{ $j <= $i ? 'gold' : 'gray' }}; font-size: 17px;">&#9733;</span>
+                                                            @endfor
+                                                        </span>
                                                     </div>
-                                                    <span>({{ $ratingFiveStarCount }})</span>
-                                                </div>
-                                                <div class="star-wrapper">
-                                                    <span>4 Estrellas</span>
-                                                    <div class="star">
-                                                        <span style='width:0'></span>
-                                                    </div>
-                                                    <span>({{ $ratingFourStarCount }})</span>
-                                                </div>
-                                                <div class="star-wrapper">
-                                                    <span>3 Estrellas</span>
-                                                    <div class="star">
-                                                        <span style='width:0'></span>
-                                                    </div>
-                                                    <span>({{ $ratingThreeStarCount }})</span>
-                                                </div>
-                                                <div class="star-wrapper">
-                                                    <span>2 Estrellas</span>
-                                                    <div class="star">
-                                                        <span style='width:0'></span>
-                                                    </div>
-                                                    <span>({{ $ratingTwoStarCount }})</span>
-                                                </div>
-                                                <div class="star-wrapper">
-                                                    <span>1 Estrella</span>
-                                                    <div class="star">
-                                                        <span style='width:0'></span>
-                                                    </div>
-                                                    <span>({{ $ratingOneStarCount }})</span>
-                                                </div>
+                                                @endfor
                                             </div>
                                         </div>
+
                                     </div>
                                     <div class="row r-2 u-s-m-b-26 u-s-p-b-22">
                                         <div class="col-lg-12">
-
-                                            <!-- Calificación por Estrellas (de un Producto) (en la pestaña "Reseñas"). -->
+                                            <!-- Calificación por Estrellas (de un Producto) -->
                                             <form method="POST" action="{{ url('add-rating') }}" name="formRating" id="formRating">
-                                                @csrf {{-- Previniendo Solicitudes CSRF: https://laravel.com/docs/9.x/csrf#preventing-csrf-requests --}}
+                                                @csrf {{-- Previniendo Solicitudes CSRF --}}
 
                                                 <input type="hidden" name="product_id" value="{{ $productDetails['id'] }}">
                                                 <div class="your-rating-wrapper">
                                                     <h6 class="review-h6">Tu reseña es importante.</h6>
                                                     <h6 class="review-h6">¿Has usado este producto antes?</h6>
                                                     <div class="star-wrapper u-s-m-b-8">
-
-                                                        <!-- Calificación por Estrellas (de un Producto) (en la pestaña "Reseñas"). -->
+                                                        <!-- Calificación por Estrellas -->
                                                         <div class="rate">
-                                                            <input style="display: none" type="radio" id="star5" name="rating" value="5" />
-                                                            <label for="star5" title="text">5 estrellas</label>
-
-                                                            <input style="display: none" type="radio" id="star4" name="rating" value="4" />
-                                                            <label for="star4" title="text">4 estrellas</label>
-
-                                                            <input style="display: none" type="radio" id="star3" name="rating" value="3" />
-                                                            <label for="star3" title="text">3 estrellas</label>
-
-                                                            <input style="display: none" type="radio" id="star2" name="rating" value="2" />
-                                                            <label for="star2" title="text">2 estrellas</label>
-
-                                                            <input style="display: none" type="radio" id="star1" name="rating" value="1" />
-                                                            <label for="star1" title="text">1 estrella</label>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" style="display: none" />
+                                                                <label for="star{{ $i }}" title="{{ $i }} estrella{{ $i > 1 ? 's' : '' }}" class="star-label">
+                                                                    <span class="star">&#9733;</span>
+                                                                </label>
+                                                            @endfor
                                                         </div>
-
                                                     </div>
                                                     <textarea class="text-area u-s-m-b-8" id="review-text-area" placeholder="Tu Reseña" name="review" required></textarea>
-                                                    <button class="button button-outline-secondary">Enviar Reseña</button>
+                                                    <button type="submit" class="button button-outline-secondary">Enviar Reseña</button>
                                                 </div>
                                             </form>
-
                                         </div>
                                     </div>
                                     <!-- Obtener Reseñas -->
                                     <div class="get-reviews u-s-p-b-22">
-                                        <!-- Opciones de Reseña -->
                                         <div class="review-options u-s-m-b-16">
                                             <div class="review-option-heading">
                                                 <h6>Reseñas
-                                                    <span> ({{ count($ratings) }}) </span>
+                                                    <span class="review-count"> ({{ count($ratings) }}) </span>
                                                 </h6>
                                             </div>
                                         </div>
-                                        <!-- Opciones de Reseña /- -->
-                                        <!-- Todas las Reseñas -->
-                                        <div class="reviewers">
-
-                                            {{-- Mostrar las Calificaciones del Usuario --}}
-                                            @if (count($ratings) > 0) {{-- si hay calificaciones para el producto --}}
-                                                @foreach($ratings as $rating)
-                                                    <div class="review-data">
-                                                        <div class="reviewer-name-and-date">
-                                                            <h6 class="reviewer-name">{{ $rating['user']['name'] }}</h6>
-                                                            <span class="reviewer-date">{{ date('d/m/Y', strtotime($rating['created_at'])) }}</span>
-                                                        </div>
-                                                        <div class="star-wrapper">
-                                                            <div class="star">
-                                                                @for ($i = 1; $i <= 5; $i++)
-                                                                    <span style="width: {{ ($rating['rating'] >= $i) ? '100%' : '0%' }}"></span>
-                                                                @endfor
-                                                            </div>
-                                                        </div>
-                                                        <p>{{ $rating['review'] }}</p>
+                                    </div>
+                                    <div class="reviewers">
+                                        {{-- Mostrar las Calificaciones del Usuario --}}
+                                        @if (count($ratings) > 0)
+                                            @foreach($ratings as $rating)
+                                                <div class="review-data">
+                                                    <div class="reviewer-name-and-date">
+                                                        <h6 class="reviewer-name">{{ $rating['user']['name'] }}</h6>
+                                                        <span class="reviewer-date">{{ date('d/m/Y', strtotime($rating['created_at'])) }}</span>
                                                     </div>
-                                                @endforeach
-                                            @else
-                                                <h6>No hay Reseñas para este Producto</h6>
-                                            @endif
-
-                                        </div>
+                                                    <p class="review-text">{{ $rating['review'] }}</p>
+                                                    <div class="review-stars">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <span style="color: {{ $i <= $rating['rating'] ? 'gold' : 'gray' }}; font-size: 17px">&#9733;</span>
+                                                        @endfor
+                                                    </div>
+                                                    @if($rating['response'])
+                                                        <div class="vendor-response">
+                                                            <strong>Respuesta del Vendedor:</strong>
+                                                            <p class="response-text">{{ $rating['response'] }}</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <h6 class="no-reviews">No hay Reseñas para este Producto</h6>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
+ <!--SE CAMBIO----------------------------------------------------- /- -->
                             <!-- Pestaña de Reseñas /- -->
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- Detail-Tabs /- -->
             <!-- Different-Product-Section -->
             <div class="detail-different-product-section u-s-p-t-80">

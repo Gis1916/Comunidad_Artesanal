@@ -13,7 +13,7 @@
         <table>
             <tr><td>¡Estimado Admin!</td></tr>
             <tr><td>&nbsp;</td></tr>
-            <tr><td>Consulta del usuario en el sitio web de la aplicación de comercio electrónico de múltiples proveedores, página de Contáctenos. Los detalles son los siguientes:</td></tr>
+            <tr><td>Consulta del usuario en el sitio web de la Comunidad Artesanal, página de Contáctenos. Los detalles son los siguientes:</td></tr>
             <tr><td>&nbsp;</td></tr>
             <tr><td>Nombre: {{ $name }}</td></tr>
             <tr><td>&nbsp;</td></tr>
