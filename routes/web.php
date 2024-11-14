@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ProductsController;
 
 use App\Http\Controllers\Admin\SalesController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

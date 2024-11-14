@@ -51,6 +51,10 @@
                                 <td>{{ $order['grand_total'] }}</td>
                                 <td>{{ date('Y-m-d h:i:s', strtotime($order['created_at'])) }}</td>
                                 <td>
+<<<<<<< HEAD
+=======
+								
+>>>>>>> 2d6b2f34a724724e2a0ff21a1a1fb205e357852e
                                     @php
                                         // Determinar el color del botón según el estado del pedido
                                         $buttonClass = 'btn-primary'; // Color por defecto

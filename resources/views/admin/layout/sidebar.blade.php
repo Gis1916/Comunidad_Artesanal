@@ -57,6 +57,7 @@
                     </ul>
                     <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
                         <li class="nav-item"> <a @if (Session::get('page') == 'sales') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/sales') }}">Ventas</a></li>
+<<<<<<< HEAD
                     </ul>
                 </div>
             </li>
@@ -72,6 +73,8 @@
                         <li class="nav-item"> 
                             <a @if (Session::get('page') == 'ratings') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/ratings') }}">Calificaciones y Reseñas de Productos</a>
                         </li>
+=======
+>>>>>>> 2d6b2f34a724724e2a0ff21a1a1fb205e357852e
                     </ul>
                 </div>
             </li>
